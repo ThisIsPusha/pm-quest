@@ -1,0 +1,131 @@
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>PM Quest – Learn Product Management like a Game</title>
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Nunito:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{--ink:#1b1b2f;--card:#fffdf4;--txt:#1b1b2f;--sky1:#5ec8ff;--sky2:#c9f0ff;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--sky1:#10143a;--sky2:#3a2a6b}}
+:root[data-theme="dark"]{--sky1:#10143a;--sky2:#3a2a6b}
+*{box-sizing:inherit}
+body{margin:0;font-family:Nunito,sans-serif;color:var(--txt);background:linear-gradient(var(--sky1),var(--sky2));min-height:100vh;overflow-x:hidden}
+.px{font-family:'Press Start 2P',monospace}
+header{position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--ink);color:#fff;padding:10px 14px;display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;border-bottom:4px solid #f5c542}
+header h1{font-size:13px;margin:0;color:#f5c542}
+.hud{display:flex;gap:14px;font-size:10px;align-items:center}
+.bar{width:110px;height:12px;background:#333;border:2px solid #fff;border-radius:2px}
+.bar i{display:block;height:100%;background:#43e06c;width:0;transition:width .6s}
+.cloud{position:fixed;top:90px;font-size:56px;opacity:.85;animation:drift 60s linear infinite;pointer-events:none}
+.cloud:nth-of-type(2){top:220px;font-size:40px;animation-duration:90s;animation-delay:-30s}
+.cloud:nth-of-type(3){top:420px;animation-duration:75s;animation-delay:-50s}
+@keyframes drift{from{left:-80px}to{left:105%}}
+main{max-width:760px;margin:0 auto;padding:18px 14px 80px;position:relative}
+.hero{text-align:center;margin:14px 0 22px}
+.hero h2{font-size:clamp(16px,4.5vw,26px);line-height:1.5;margin:0 0 8px;text-shadow:3px 3px 0 rgba(0,0,0,.2);color:#fff}
+.hero p{margin:0;color:#fff;font-weight:700}
+.world{margin:26px 0;padding:16px;border:4px solid var(--ink);border-radius:14px;background:var(--card);box-shadow:6px 6px 0 rgba(0,0,0,.25)}
+.world h3{margin:0 0 4px;font-size:12px;line-height:1.6}
+.world .sub{font-size:13px;margin:0 0 14px;opacity:.75}
+.path{display:flex;flex-wrap:wrap;gap:18px 8px;justify-content:center;align-items:center}
+.node{position:relative;width:78px;height:78px;border:4px solid var(--ink);border-radius:14px;cursor:pointer;font-family:'Press Start 2P',monospace;font-size:10px;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:4px;color:#fff;box-shadow:0 5px 0 var(--ink);transition:transform .1s}
+.node:hover:not(.lock){transform:translateY(-4px)}
+.node .e{font-size:22px}
+.node.lock{filter:grayscale(1) brightness(.7);cursor:not-allowed}
+.node.done::after{content:'⭐';position:absolute;top:-14px;right:-12px;font-size:20px;animation:spin 3s linear infinite}
+.node.cur{animation:pulse 1.2s infinite}
+.node.cur::before{content:'🏃';position:absolute;top:-34px;font-size:28px;animation:hop .7s infinite alternate}
+.link{width:16px;height:6px;background:var(--ink);border-radius:3px;opacity:.5}
+@keyframes hop{to{transform:translateY(-10px)}}
+@keyframes pulse{50%{box-shadow:0 5px 0 var(--ink),0 0 0 8px rgba(245,197,66,.6)}}
+@keyframes spin{50%{transform:scaleX(-1)}}
+#modal{position:fixed;inset:0;background:rgba(10,10,30,.75);display:none;align-items:center;justify-content:center;padding:14px;z-index:20}
+#modal.on{display:flex}
+.box{background:var(--card);border:5px solid var(--ink);border-radius:14px;max-width:640px;width:100%;max-height:88vh;overflow:auto;padding:18px;animation:pop .25s}
+@keyframes pop{from{transform:scale(.7);opacity:0}}
+.box h4{font-size:12px;line-height:1.6;margin:0 0 10px}
+.tag{display:inline-block;font-size:9px;padding:4px 7px;background:var(--ink);color:#f5c542;border-radius:4px;margin-bottom:8px}
+.box p,.box li{font-size:15px;line-height:1.55}
+.box h5{margin:14px 0 4px;font-size:10px;font-family:'Press Start 2P',monospace}
+.opt,.btn{display:block;width:100%;text-align:left;margin:6px 0;padding:10px 12px;border:3px solid var(--ink);border-radius:8px;background:#fff;color:#1b1b2f;font:700 14px Nunito,sans-serif;cursor:pointer}
+.opt:hover{background:#ffe9a8}
+.opt.ok{background:#8ef0a4}.opt.bad{background:#ff9d9d;animation:shake .3s}
+@keyframes shake{25%{transform:translateX(-6px)}75%{transform:translateX(6px)}}
+.btn{text-align:center;background:#f5c542;font-family:'Press Start 2P',monospace;font-size:10px;margin-top:14px}
+.btn:disabled{opacity:.4;cursor:not-allowed}
+.btn.g{background:#ddd}
+.step{display:flex;gap:10px;align-items:flex-start;margin:8px 0;font-size:14px;line-height:1.5}
+.step input{width:20px;height:20px;margin-top:2px;accent-color:#43b047}
+.coin{position:fixed;font-size:24px;z-index:30;pointer-events:none;animation:fly 1s forwards}
+@keyframes fly{to{transform:translate(var(--x),-220px) rotate(360deg);opacity:0}}
+footer{text-align:center;color:#fff;font-size:12px;padding:10px}
+</style></head><body>
+<span class="cloud">☁️</span><span class="cloud">☁️</span><span class="cloud">☁️</span>
+<header><h1 class="px">🍄 PM QUEST</h1>
+<div class="hud px"><span>🪙 <b id="coins">0</b></span><span>LV <b id="lv">0</b>/<span id="tot"></span></span><div class="bar"><i id="xp"></i></div><span id="reset" style="cursor:pointer" title="Reset">↺</span></div></header>
+<main><div class="hero"><h2 class="px">Beat the levels.<br>Become a Product Manager.</h2><p>Learn fundamentals → execution → AI PM projects → boss fights. Tap the glowing level!</p></div><div id="map"></div></main>
+<footer>Made with Claude · v0.1 — ready to customise</footer>
+<div id="modal"><div class="box" id="box"></div></div>
+<script>
+const WORLDS=[
+{n:'WORLD 1',t:'PM Fundamentals',c:'#43b047',s:'Learn the core mindset and toolkit.',L:[
+['1-1','What a PM Does','A PM owns the <b>why</b> and <b>what</b> of a product; engineers and designers own much of the <b>how</b>. You sit between users, business and tech, and succeed by making the right thing get built, not by building it yourself.','Which best describes a PM\'s core job?',['Writing all the code','Deciding what problem to solve and why','Managing people\'s salaries'],1],
+['1-2','Users & Research','Great products start with a real user problem. Use interviews (ask about past behavior, not opinions), surveys for scale, and usage data for what people actually do. Look for patterns across 5+ conversations.','Best interview question?',['Would you use a feature like X?','Tell me about the last time you struggled with Y','Do you like our app?'],1],
+['1-3','Prioritization','Everything can\'t be built. <b>RICE</b> = (Reach × Impact × Confidence) ÷ Effort. Alternatives: MoSCoW, Impact/Effort matrix. The score starts the debate; it doesn\'t end it.','In RICE, what does a higher Effort do?',['Raises the score','Lowers the score','Nothing'],1],
+['1-4','Metrics','Pick a <b>North Star</b> metric that tracks delivered user value. Use AARRR (Acquisition, Activation, Retention, Revenue, Referral). Beware vanity metrics: total signups say little, retained users say a lot.','Which is a vanity metric?',['Week-4 retention','Total all-time signups','Activation rate'],1]]},
+{n:'WORLD 2',t:'Execution Zone',c:'#e8602c',s:'Ship things with other humans.',L:[
+['2-1','Writing a PRD','A PRD states: problem, who it\'s for, goals and success metrics, scope and non-goals, requirements, open questions. Short and clear beats long. Non-goals prevent scope creep.','Why list non-goals?',['To fill space','To prevent scope creep','To impress execs'],1],
+['2-2','Roadmaps','A good roadmap communicates priorities and outcomes, not a promise of dates. Use Now / Next / Later buckets, tie each item to a goal, and expect it to change.','A Now/Next/Later roadmap emphasises…',['Exact delivery dates','Priorities and outcomes','Engineer headcount'],1],
+['2-3','Working with Eng & Design','Bring them in early, share the problem not just a solution, respect estimates, and say "why" often. Trust is your real currency.','Best way to start a project with engineers?',['Hand them a finished spec','Share the problem and context early','Set the deadline first'],1],
+['2-4','Launch & Experiments','Run A/B tests with a clear hypothesis, one primary metric and enough sample size. Roll out gradually (flags, 5% → 50% → 100%) and define a rollback plan before launch.','Why roll out gradually?',['Limits damage if something breaks','It looks fancier','Engineers prefer it'],0]]},
+{n:'WORLD 3',t:'AI PM Projects',c:'#7b3fc4',s:'Build portfolio-ready projects. Pick 2-3 across categories (from the guide). Each is a doc: spec + reasoning.',P:1,L:[
+['P1','Eval Set for Hallucinations','Evals & Quality','LLM features fail silently: a model can sound confident while wrong, and most teams have no structured way to catch it before users do.','Pick one real use case (support bot, summarizer, code assistant). Write 30-50 test cases covering edge cases, ambiguous queries, out-of-scope questions and adversarial prompts. Define pass/fail for each, then score 2-3 models or prompt versions.',['Structured thinking about failure modes','Measurable quality criteria for a fuzzy problem','Comparing versions with data, not vibes'],['Pick a use case and write a one-line description of what "good" looks like.','Brainstorm failure types: hallucination, refusal errors, out-of-scope, prompt injection, ambiguity.','Write 30-50 test cases in a sheet: input, expected behavior, category.','Define explicit pass/fail criteria per case (or a 1-5 rubric with anchors).','Run 2-3 models/prompts, record results, calculate pass rate per category.','Write up findings: which model wins where, and what you\'d ship.']],
+['P2','Human-in-the-Loop Review','Evals & Quality','Fully automated AI makes mistakes at scale. Teams must catch and correct errors without manually reviewing 100% of outputs.','Write a product spec for a review queue: what triggers review (confidence score, flagged keywords, random sampling), the reviewer interface, and how corrections feed back to improve the model or prompt.',['Confidence thresholds & sampling strategy','UX for internal/operational tools','Closing the loop from review to improvement'],['Define the AI output being reviewed and the cost of an error.','List triggers: low confidence, risky keywords, new user segments, plus a random 2-5% sample.','Sketch the reviewer screen: input, AI output, approve/edit/reject, reason tags.','Specify the feedback loop: corrections go to an eval set, prompt tweaks or fine-tuning data.','Define metrics: review rate, reviewer agreement, error rate over time, time per review.']],
+['P3','Spec a RAG Pipeline','Retrieval & RAG','RAG powers most enterprise AI products, yet many PMs can\'t explain chunking, embedding and how retrieval affects output.','Pick a real document set (handbook, product docs, public dataset). Define chunking strategy, what happens when retrieval returns irrelevant context, and how to measure retrieval quality separately from generation quality.',['Technical fluency in how RAG works','Separating retrieval problems from generation problems','Precision/recall-style quality metrics'],['Choose a document set and list 10 real questions users would ask.','Define chunking: size, overlap, split by headings, metadata to keep.','Draw the pipeline: ingest → embed → store → retrieve top-k → prompt → answer.','Handle bad retrieval: score thresholds, re-ranking, fallback behavior.','Measure retrieval alone (did the right chunk appear in top-k?) vs answer quality separately.']],
+['P4','"No Good Answer Found" UX','Retrieval & RAG','Every retrieval system eventually fails to find relevant context. What the product does next shows its maturity.','Design the UX and logic for low retrieval confidence: say "I don\'t know", hand off to a human, or ask a clarifying question? Write decision logic and exact copy for each path.',['Designing for failure states','Balancing trust against confident wrong answers'],['Define confidence bands (high / medium / low) and how they\'re computed.','Map each band to a behavior: answer, answer with caveat, clarify, escalate.','Write exact copy for each path, in your product\'s voice.','Add escape hatches: contact human, rephrase, browse sources.','Define metrics: deflection, escalation rate, user satisfaction on "I don\'t know" responses.']],
+['P5','Token Cost Model','Unit Economics','AI features have a variable cost per interaction. PMs who ignore this approve features that lose money at scale.','Pick a feature (e.g. AI writing assistant). Estimate tokens per request (input + output), compute cost at current model pricing, and project monthly cost at 10K / 100K / 1M users. Propose 2-3 cost levers.',['Command of unit economics','Credible talks with finance/leadership','Concrete cost-control levers'],['Choose the feature and estimate usage: requests per user per month.','Estimate average input and output tokens per request.','Look up current model pricing and compute cost per interaction.','Build a sheet projecting monthly cost at 10K / 100K / 1M users.','Propose levers: caching, smaller models for easy queries, output length limits; quantify savings.']],
+['P6','Model Routing Strategy','Unit Economics','Not every query needs the priciest model. Smart products route simple queries to cheaper/faster models.','Spec a routing layer: which signals pick the model (query complexity, user tier, latency need) and estimate savings versus sending everything to the top-tier model.',['Cost vs quality trade-offs','How production AI controls spend'],['Classify your queries into simple / medium / complex with examples.','List routing signals: length, intent, user tier, latency budget.','Assign a model per tier and define a fallback if quality is low.','Estimate traffic share per tier and compute blended cost vs all-premium.','Define quality guardrails: eval each route, monitor escalation and complaints.']],
+['P7','Latency Fallback UX','Latency & Failure UX','AI responses can take under a second or 30+ seconds. Products that don\'t plan for this feel broken.','Design loading, streaming and timeout states. Define exact timeout thresholds, what users see at each stage, and what happens if the model never responds (retry, cached answer, graceful error).',['UX for unpredictable response times','Concrete thresholds, not "show a spinner"'],['Measure or assume latency distribution: p50, p95, p99.','Define stages: 0-2s spinner, 2-8s streaming/progress copy, 8-20s reassure, 30s timeout.','Write the copy and visuals for each stage.','Specify the failure path: auto-retry once, cached answer, clear error with manual retry.','Track metrics: abandonment by latency bucket, timeout rate, retry success.']],
+['P8','Model Rollback Spec','Latency & Failure UX','Providers update models often, and a new version can silently make your product worse.','Write a spec for detecting regressions after a model update (which metrics, what triggers an alert) and the process to roll back safely.',['Operational maturity beyond launch day','AI products need ongoing monitoring'],['Pin model versions and list what changes when a provider updates.','Choose regression signals: eval pass rate, thumbs-down rate, escalation, cost, latency.','Set alert thresholds and who gets paged.','Define the rollback process: flag switch, shadow testing, canary rollout.','Write a post-incident review template and a regression-test schedule.']]]},
+{n:'WORLD 4',t:'Advanced Castle',c:'#c0392b',s:'Strategy, money and leadership. Final boss ahead.',L:[
+['4-1','Strategy & Moats','Strategy is choosing what <b>not</b> to do. Durable moats: network effects, switching costs, proprietary data, brand, scale. In AI, data and workflow integration often matter more than the model itself.','A moat in AI is often…',['Using the newest model','Proprietary data and workflow lock-in','Having a cool logo'],1],
+['4-2','Pricing & Monetization','Price on value, not cost. Common models: freemium, per-seat, usage-based, tiers. For AI, usage-based or credit pricing helps protect margins.','Why does AI often use usage-based pricing?',['Costs scale with usage','It\'s cheaper to build','Users love complexity'],0],
+['4-3','Leading Without Authority','You rarely manage the people you depend on. Influence through clear writing, data, shared goals and credit-sharing. Disagree early, commit fully.','What builds influence best?',['Escalating to the VP','Clarity, data and trust','Being the loudest'],1],
+['4-4','👑 FINAL BOSS','You\'ve covered discovery, execution, AI products and strategy. To defeat the boss: ship 2-3 projects from World 3 as a doc or repo, and tell a clear story of how you think.','Best way to present your work?',['A hiring manager can read it and see how you reason','A 50-slide deck with no data','Only screenshots'],0]]}
+];
+const ALL=WORLDS.flatMap(w=>w.L.map(l=>({w,l,id:l[0]})));
+let S={done:{},coins:0};
+try{S=JSON.parse(localStorage.getItem('pmq'))||S}catch(e){}
+const save=()=>{try{localStorage.setItem('pmq',JSON.stringify(S))}catch(e){}};
+const $=i=>document.getElementById(i);
+function render(){
+  const cur=ALL.findIndex(x=>!S.done[x.id]);let h='';
+  WORLDS.forEach(w=>{h+=`<section class="world"><h3 class="px" style="color:${w.c}">${w.n}: ${w.t}</h3><p class="sub">${w.s}</p><div class="path">`;
+    w.L.forEach((l,i)=>{const idx=ALL.findIndex(x=>x.id===l[0]),d=S.done[l[0]],lock=cur!==-1&&idx>cur;
+      h+=(i?'<span class="link"></span>':'')+`<div class="node ${d?'done':''} ${idx===cur?'cur':''} ${lock?'lock':''}" style="background:${w.c}" data-i="${idx}"><span class="e">${lock?'🔒':w.P?'🛠️':l[0]==='4-4'?'👑':'📘'}</span>${l[0]}</div>`});
+    h+='</div></section>'});
+  $('map').innerHTML=h;
+  const n=Object.keys(S.done).length;
+  $('coins').textContent=S.coins;$('lv').textContent=n;$('tot').textContent=ALL.length;$('xp').style.width=(n/ALL.length*100)+'%';
+  document.querySelectorAll('.node').forEach(el=>el.onclick=()=>{const i=+el.dataset.i,c=ALL.findIndex(x=>!S.done[x.id]);if(c===-1||i<=c)open(i)});
+}
+function burst(){for(let i=0;i<14;i++){const c=document.createElement('span');c.className='coin';c.textContent='🪙';c.style.left=(30+Math.random()*40)+'vw';c.style.top='60vh';c.style.setProperty('--x',(Math.random()*160-80)+'px');c.style.animationDelay=(i*.04)+'s';document.body.appendChild(c);setTimeout(()=>c.remove(),1400)}}
+function finish(id,reward){if(!S.done[id]){S.done[id]=1;S.coins+=reward;save();burst()}$('modal').classList.remove('on');render()}
+function open(i){
+  const {w,l,id}=ALL[i],b=$('box');
+  if(w.P){
+    b.innerHTML=`<span class="tag px">PROJECT ${id} · ${l[2]}</span><h4 class="px">${l[1]}</h4><h5>THE PROBLEM</h5><p>${l[3]}</p><h5>WHAT TO BUILD</h5><p>${l[4]}</p><h5>SKILLS YOU DEMONSTRATE</h5><ul>${l[5].map(s=>`<li>${s}</li>`).join('')}</ul><h5>STEP-BY-STEP GUIDE</h5>${l[6].map((s,k)=>`<label class="step"><input type="checkbox"><span><b>Step ${k+1}.</b> ${s}</span></label>`).join('')}<p style="font-size:13px;opacity:.75">💡 Present it as a PDF, Notion page or GitHub repo: spec + eval set + your reasoning.</p><button class="btn" id="go" disabled>COMPLETE PROJECT (+50🪙)</button><button class="btn g" id="x">CLOSE</button>`;
+    const bx=[...b.querySelectorAll('input')],go=$('go');
+    const up=()=>go.disabled=!bx.every(c=>c.checked)&&!S.done[id];bx.forEach(c=>{c.checked=!!S.done[id];c.onchange=up});up();go.onclick=()=>finish(id,50);
+  }else{
+    b.innerHTML=`<span class="tag px">LEVEL ${id}</span><h4 class="px">${l[1]}</h4><p>${l[2]}</p><h5>BOSS QUESTION</h5><p><b>${l[3]}</b></p>${l[4].map((o,k)=>`<button class="opt" data-k="${k}">${o}</button>`).join('')}<button class="btn" id="go" disabled>COMPLETE LEVEL (+20🪙)</button><button class="btn g" id="x">CLOSE</button>`;
+    const go=$('go');if(S.done[id])go.disabled=false;
+    b.querySelectorAll('.opt').forEach(o=>o.onclick=()=>{if(+o.dataset.k===l[5]){o.classList.add('ok');go.disabled=false}else{o.classList.add('bad')}});
+    go.onclick=()=>finish(id,20);
+  }
+  $('x').onclick=()=>$('modal').classList.remove('on');
+  $('modal').classList.add('on');
+}
+$('modal').onclick=e=>{if(e.target.id==='modal')$('modal').classList.remove('on')};
+$('reset').onclick=()=>{if(confirm('Reset all progress?')){S={done:{},coins:0};save();render()}};
+render();
+</script></body></html>
